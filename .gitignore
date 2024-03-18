@@ -1,3 +1,4 @@
 # exclude build directories
 /node_modules
 /.vscode
+/out
