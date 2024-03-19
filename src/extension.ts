@@ -68,7 +68,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function throttleInvoke(newText: string) {
-	console.log("获得的text:", newText);
 	// 调取翻译api进行翻译
 	let translateRes = null;
 	try {
@@ -146,7 +145,6 @@ async function translate(text: string, apiKey: string, apiSecret: string) {
 
 // 展示翻译结果
 function showResult(res: any) {
-	console.log("res:",res);
 	if (res.errorCode != '0') {
 		vscode.window.showErrorMessage("apiKey错误...|服务错误...");
 		return;
