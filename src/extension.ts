@@ -14,7 +14,11 @@ export function activate(context: vscode.ExtensionContext) {
 	translateLength = config.get('translateLength') as string;
 	apiKey = config.get('apiKey') as string;
 	apiSecret = config.get('apiSecret') as string;
+	// 节流调用
+	const invokTranslate = throttle(throttleInvoke, 1000);
 	let disposable = vscode.commands.registerCommand('extension.translate', async () => {
+		// 节流操作
+
 		// 判断apiKey是否为空
 		if (apiKey == null || apiKey == "") {
 			vscode.window.showErrorMessage("apiKey不能为空...|请输入apiKey...");
@@ -37,6 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showErrorMessage("翻译文本过长...");
 			return;
 		}
+		invokTranslate(newText);
 		// 调取翻译api进行翻译
 		let translateRes = null;
 		try {
@@ -48,18 +53,54 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	// 设置更改，触发事件
 	let settingChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-        // 检查特定配置是否被修改
-        if (event.affectsConfiguration('translate-plugin.apiKey')) {
-            apiKey = vscode.workspace.getConfiguration('translate-plugin').get('apiKey') as string;
-        }
-        if (event.affectsConfiguration('translate-plugin.apiSecret')) {
-            apiKey = vscode.workspace.getConfiguration('translate-plugin').get('apiSecret') as string;
-        }
-        if (event.affectsConfiguration('translate-plugin.translateLength')) {
-            translateLength = vscode.workspace.getConfiguration('translate-plugin').get('translateLength') as string;
-        }
-    });
-	context.subscriptions.push(disposable,settingChangeListener);
+		// 检查特定配置是否被修改
+		if (event.affectsConfiguration('translate-plugin.apiKey')) {
+			apiKey = vscode.workspace.getConfiguration('translate-plugin').get('apiKey') as string;
+		}
+		if (event.affectsConfiguration('translate-plugin.apiSecret')) {
+			apiKey = vscode.workspace.getConfiguration('translate-plugin').get('apiSecret') as string;
+		}
+		if (event.affectsConfiguration('translate-plugin.translateLength')) {
+			translateLength = vscode.workspace.getConfiguration('translate-plugin').get('translateLength') as string;
+		}
+	});
+	context.subscriptions.push(disposable, settingChangeListener);
+}
+
+async function throttleInvoke(newText: string) {
+	console.log("获得的text:", newText);
+	// 调取翻译api进行翻译
+	let translateRes = null;
+	try {
+		translateRes = await translate(newText, apiKey, apiSecret);
+	} catch (err) {
+		vscode.window.showErrorMessage("apiKey错误...|服务错误...");
+	}
+	showResult(translateRes);
+}
+
+// 封装成节流函数
+function throttle(fn: Function, interval: number) {
+	// 1.记录上一次的开始时间
+	let lastTime = 0
+
+	// 2.事件触发时, 真正执行的函数
+	const _throttle = function (...args: any[]) {
+		// let args = arguments;
+		// 2.1.获取当前事件触发时的时间
+		const nowTime = new Date().getTime()
+
+		// 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+		const remainTime = interval - (nowTime - lastTime)
+		if (remainTime <= 0) {
+			// 2.3.真正触发函数
+			fn.apply(null, args);
+			// 2.4.保留上次触发的时间
+			lastTime = nowTime
+		}
+	}
+
+	return _throttle
 }
 // 调用有道api进行翻译
 async function translate(text: string, apiKey: string, apiSecret: string) {
@@ -105,6 +146,7 @@ async function translate(text: string, apiKey: string, apiSecret: string) {
 
 // 展示翻译结果
 function showResult(res: any) {
+	console.log("res:",res);
 	if (res.errorCode != '0') {
 		vscode.window.showErrorMessage("apiKey错误...|服务错误...");
 		return;
