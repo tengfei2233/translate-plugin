@@ -28,6 +28,27 @@
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "title": "translate-plugin",
+      "properties": {
+        "translate-plugin.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "请输入网易有道词典的apiKey"
+        },
+        "translate-plugin.apiSecret": {
+          "type": "string",
+          "default": "",
+          "description": "请输入网易有道词典的apiSecret",
+          "scope": "machine"
+        },
+        "translate-plugin.translateLength": {
+          "type":"integer",
+          "default": 100,
+          "description": "请输入每次翻译的最大长度(单词数/字数)"
+        }
+      }
     }
   },
   "scripts": {

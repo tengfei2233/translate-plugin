@@ -1,13 +1,29 @@
 import * as vscode from 'vscode';
 import https from 'https';
-import crypto from 'crypto'
+import crypto from 'crypto';
 import FormData from 'form-data';
+
+let translateLength = "";
+let apiKey = ""
+let apiSecret = ""
 
 // 事件入口
 export function activate(context: vscode.ExtensionContext) {
-
-	console.log('translate-plugin 插件已激活!');
+	// 获取非敏感配置信息
+	const config = vscode.workspace.getConfiguration('translate-plugin');
+	translateLength = config.get('translateLength') as string;
+	apiKey = config.get('apiKey') as string;
+	apiSecret = config.get('apiSecret') as string;
 	let disposable = vscode.commands.registerCommand('extension.translate', async () => {
+		// 判断apiKey是否为空
+		if (apiKey == null || apiKey == "") {
+			vscode.window.showErrorMessage("apiKey不能为空...|请输入apiKey...");
+			return;
+		}
+		if (apiSecret == null || apiSecret == "") {
+			vscode.window.showErrorMessage("apiSecret不能为空...|请输入apiSecret...");
+			return;
+		}
 		// 获取选中的文本
 		const editor = vscode.window.activeTextEditor;
 		const selection = editor?.selection;
@@ -15,25 +31,47 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 		const text = editor.document.getText(selection);
+		// 输入文本处理
+		let newText = text.replace(/[<>\/\\]/g, ' ');
+		if (newText.split(" ").length > Number.parseInt(translateLength)) {
+			vscode.window.showErrorMessage("翻译文本过长...");
+			return;
+		}
 		// 调取翻译api进行翻译
-		const translateRes = await translate(text);
-		console.log("结果：", translateRes);
-		vscode.window.showInformationMessage(JSON.stringify(translateRes));
+		let translateRes = null;
+		try {
+			translateRes = await translate(newText, apiKey, apiSecret);
+		} catch (err) {
+			vscode.window.showErrorMessage("apiKey错误...|服务错误...");
+		}
+		showResult(translateRes);
 	});
-	context.subscriptions.push(disposable);
+	// 设置更改，触发事件
+	let settingChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
+        // 检查特定配置是否被修改
+        if (event.affectsConfiguration('translate-plugin.apiKey')) {
+            apiKey = vscode.workspace.getConfiguration('translate-plugin').get('apiKey') as string;
+        }
+        if (event.affectsConfiguration('translate-plugin.apiSecret')) {
+            apiKey = vscode.workspace.getConfiguration('translate-plugin').get('apiSecret') as string;
+        }
+        if (event.affectsConfiguration('translate-plugin.translateLength')) {
+            translateLength = vscode.workspace.getConfiguration('translate-plugin').get('translateLength') as string;
+        }
+    });
+	context.subscriptions.push(disposable,settingChangeListener);
 }
 // 调用有道api进行翻译
-async function translate(text: string) {
+async function translate(text: string, apiKey: string, apiSecret: string) {
+	// 获取appKey，appSecret等
 	const salt = crypto.randomBytes(16).toString('hex');
 	const curtime = Math.round(new Date().getTime() / 1000).toString();
-	const appKey = "3480eb02684a27da";
-	const appSecret = "rjQpZlpBTXu0tyAl0jQT6elnKlZToMvb";
-	const sign = crypto.createHash('sha256').update(appKey + truncate(text) + salt + curtime + appSecret).digest('hex');
+	const sign = crypto.createHash('sha256').update(apiKey + truncate(text) + salt + curtime + apiSecret).digest('hex');
 	const formData = new FormData();
 	formData.append('q', text);
 	formData.append('from', 'auto');
 	formData.append('to', 'auto');
-	formData.append('appKey', appKey);
+	formData.append('appKey', apiKey);
 	formData.append('salt', salt);
 	formData.append('sign', sign);
 	formData.append('signType', 'v3');
@@ -65,11 +103,20 @@ async function translate(text: string) {
 	});
 }
 
+// 展示翻译结果
+function showResult(res: any) {
+	if (res.errorCode != '0') {
+		vscode.window.showErrorMessage("apiKey错误...|服务错误...");
+		return;
+	}
+	vscode.window.showInformationMessage("翻译结果：" + res.translation[0])
+}
 // 待翻译文本截取
-function truncate(q: string) {
+function truncate(q: any) {
 	var len = q.length;
 	if (len <= 20) return q;
 	return q.substring(0, 10) + len + q.substring(len - 10, len);
 }
+
 
 export function deactivate() { }
