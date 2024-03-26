@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		const text = editor.document.getText(selection);
 		// 输入文本处理
-		let newText = text.replace(/[<>\/\\]/g, ' ');
+		let newText = formatText(text);
 		if (newText.split(" ").length > Number.parseInt(translateLength)) {
 			vscode.window.showErrorMessage("翻译文本过长...");
 			return;
@@ -156,6 +156,18 @@ function truncate(q: any) {
 	var len = q.length;
 	if (len <= 20) return q;
 	return q.substring(0, 10) + len + q.substring(len - 10, len);
+}
+
+// 带翻译文本格式化
+function formatText(text: string) {
+	return text
+	.replaceAll(/[<>\/\\]/g, ' ')
+	.replaceAll(/([A-Z])/g, ' $1')
+	.replaceAll(/[_\-.]+/g, ' ')
+	.toLowerCase()
+    // 去除首尾空格
+    .trim();
+
 }
 
 
