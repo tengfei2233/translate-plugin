@@ -2,12 +2,14 @@
   "name": "translate-plugin",
   "displayName": "translate-plugin",
   "description": "vscode的翻译插件",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.87.2"
   },
+  "icon": "icon.png",
+  "publisher": "tengfei2233",
   "categories": [
-    "Other"
+    "Formatters"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -51,6 +53,10 @@
       }
     }
   },
+  "repository": {
+		"type": "git",
+		"url": "git://github.com/tengfei2233/translate-plugin.git"
+	},
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
