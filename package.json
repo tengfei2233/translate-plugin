@@ -34,15 +34,27 @@
     "configuration": {
       "title": "translate-plugin",
       "properties": {
-        "translate-plugin.apiKey": {
+        "translate-plugin.apiType": {
+          "type": "string",
+          "enum": ["有道云翻译", "彩云小译"],
+          "default": "有道云翻译",
+          "description": "选择翻译平台"
+        },
+        "translate-plugin.youdaoApiKey": {
           "type": "string",
           "default": "",
           "description": "请输入网易有道词典的apiKey"
         },
-        "translate-plugin.apiSecret": {
+        "translate-plugin.youdaoApiSecret": {
           "type": "string",
           "default": "",
           "description": "请输入网易有道词典的apiSecret",
+          "scope": "machine"
+        },
+        "translate-plugin.caiyunApiSecret": {
+          "type": "string",
+          "default": "",
+          "description": "请输入彩云小译的apiSecret",
           "scope": "machine"
         },
         "translate-plugin.translateLength": {
