@@ -34,11 +34,16 @@
     "configuration": {
       "title": "translate-plugin",
       "properties": {
-        "translate-plugin.apiType": {
+        "translate-plugin.translateType": {
           "type": "string",
           "enum": ["有道云翻译", "彩云小译"],
           "default": "有道云翻译",
           "description": "选择翻译平台"
+        },
+        "translate-plugin.translateLength": {
+          "type":"integer",
+          "default": 100,
+          "description": "请输入每次翻译的最大长度(单词数/字数)"
         },
         "translate-plugin.youdaoApiKey": {
           "type": "string",
@@ -56,11 +61,6 @@
           "default": "",
           "description": "请输入彩云小译的apiSecret",
           "scope": "machine"
-        },
-        "translate-plugin.translateLength": {
-          "type":"integer",
-          "default": 100,
-          "description": "请输入每次翻译的最大长度(单词数/字数)"
         }
       }
     }
