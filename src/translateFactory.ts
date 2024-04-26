@@ -1,4 +1,5 @@
 import YouDao from "./youdao";
+import Caiyun from "./caiyun";
 
 // 翻译类型
 enum TranslateType{
@@ -24,7 +25,7 @@ async function translate(apiInfo:ApiInfo){
             return new YouDao(apiInfo.apiKey,apiInfo.apiSecret,apiInfo.translateLength,apiInfo.translateTxt).translate();
         case TranslateType.CaiYun:
             // 彩云
-            break;
+            return new Caiyun(apiInfo.apiSecret,apiInfo.translateLength,apiInfo.translateTxt).translate();
     }
 }
 

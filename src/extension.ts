@@ -31,15 +31,16 @@ export function activate(context: vscode.ExtensionContext) {
 		// 节流操作
 		const apiInfo = {
 			apiKey: youdaoApiKey,
-			apiSecret: youdaoApiSecret,
+			apiSecret: translateType == "有道云翻译" ?youdaoApiSecret:caiyunApiSecret,
 			translateLength: Number.parseInt(translateLength),
 			translateTxt: text,
 			translateType: translateType == "有道云翻译" ? TranslateType.YouDao : TranslateType.CaiYun
 		}
-		translate(apiInfo).then(res=>{
+		translate(apiInfo).then(res => {
+			console.log("翻译结果：" + res);
 			vscode.window.showInformationMessage("翻译结果：" + res)
-		}).catch((err)=>{
-			vscode.window.showErrorMessage(err);
+		}).catch((err) => {
+			vscode.window.showErrorMessage(err+"");
 		})
 	});
 	// 设置更改，触发事件

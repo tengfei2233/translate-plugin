@@ -1,9 +1,9 @@
 import https from 'https';
-import { formatText, throttle, isChinese } from './util';
+import { formatText, throttle, isChinese, isEmpty } from './util';
 
 class Caiyun {
 
-    public translate: (...args: any[]) => void;
+    public translate: (...args: any[]) => Promise<any>;
 
     constructor(public apiSecret: string, public translateLength: number, public translateTxt: string) {
         this.apiSecret = apiSecret;
@@ -12,13 +12,13 @@ class Caiyun {
         // 防抖请求
         this.translate = throttle(this._translate, 1000);
     }
-
+    
     private async _translate(): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (!this.apiSecret) {
+            if (isEmpty(this.apiSecret)) {
                 reject('caiyunApiSecret不能为空...');
             }
-            if (!this.translateLength) {
+            if (this.translateLength == null || this.translateLength == undefined) {
                 reject('最大待翻译文本长度不能为空...');
             }
             this.translateTxt = formatText(this.translateTxt);
@@ -48,7 +48,7 @@ class Caiyun {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-authorization': 'token '+this.apiSecret
+                    'x-authorization': 'token ' + this.apiSecret
                 },
             }, res => {
                 if (res.statusCode !== 200) {
@@ -68,3 +68,5 @@ class Caiyun {
     }
 
 }
+
+export default Caiyun;
