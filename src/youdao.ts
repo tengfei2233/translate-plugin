@@ -5,7 +5,7 @@ import { formatText, throttle } from './util';
 
 class YouDao {
 
-    public translate: (...args: any[]) => void;
+    public translate: (...args: any[]) => Promise<any>;
 
     constructor(public apiKey: string, public apiSecret: string, public translateLength: number, public translateTxt: string) {
         this.apiKey = apiKey;
