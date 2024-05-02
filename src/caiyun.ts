@@ -22,13 +22,13 @@ class Caiyun {
                 reject('最大待翻译文本长度不能为空...');
             }
             this.translateTxt = formatText(this.translateTxt);
+            console.log('this.translateTxt:', this.translateTxt);
             let len = this.translateTxt.replaceAll(' ', '').length;
             if (len > this.translateLength) {
                 reject('翻译内容超出限制...');
             }
             this._req().then((res) => {
-                console.log(res);
-                resolve(res);
+                resolve(res.target[0]);
             }).catch((err) => {
                 reject(err);
             })

@@ -6,7 +6,7 @@ translate-plugin是一款vscode划词翻译插件，选中需要翻译的中文�
 
 ![show](https://hexo-images-fei.oss-cn-hangzhou.aliyuncs.com/images/1711457565-show.gif)
 
-#### 使用方式
+#### 使用方式一
 
 * 应用商店搜索translate-plugin，点击安装
 * 打开[有道云开发者平台控制台](https://ai.youdao.com/console/#/app-overview)，创建一个翻译接口应用，作者了解到：每个人有50元钱的额度，足够中度翻译几年之久了哈
@@ -18,6 +18,12 @@ translate-plugin是一款vscode划词翻译插件，选中需要翻译的中文�
 ![setting](https://hexo-images-fei.oss-cn-hangzhou.aliyuncs.com/images/1711458906-setting.png)
 * 输入有道云的ApiKey与ApiSercet，填入该输入框
 * 接下来就可以使用翻译了。。。。。。
+
+#### 使用方式二
+* 在设置内搜索translate-plugin，找到translate-plugin插件的配置项
+* 选择彩云翻译 
+* 填写彩云小翻的apiSecret
+* 至于apiSecret如何获取，github可以试着找找哦
 
 ### 关于我
 #### <font color="red" >[个人网站](https://tengfei.tech)</font>

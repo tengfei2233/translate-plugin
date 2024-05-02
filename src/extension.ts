@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 	translateLength = config.get('translateLength') as string;
 	youdaoApiKey = config.get('youdaoApiKey') as string;
 	youdaoApiSecret = config.get('youdaoApiSecret') as string;
-	caiyunApiSecret = config.get('caiYunApiSecret') as string;
+	caiyunApiSecret = config.get('caiyunApiSecret') as string;
 	translateType = config.get('translateType') as string;
 	// 节流调用
 	let disposable = vscode.commands.registerCommand('extension.translate', async () => {
@@ -37,8 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 			translateType: translateType == "有道云翻译" ? TranslateType.YouDao : TranslateType.CaiYun
 		}
 		translate(apiInfo).then(res => {
-			console.log("翻译结果：" + res);
-			vscode.window.showInformationMessage("翻译结果：" + res)
+			vscode.window.showInformationMessage("翻译结果：" +res)
 		}).catch((err) => {
 			vscode.window.showErrorMessage(err+"");
 		})
@@ -60,6 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		if (event.affectsConfiguration('translate-plugin.translateType')) {
 			translateType = vscode.workspace.getConfiguration('translate-plugin').get('translateType') as string;
+			vscode.window.showInformationMessage("切换为：" +translateType);
 		}
 	});
 	context.subscriptions.push(disposable, settingChangeListener);

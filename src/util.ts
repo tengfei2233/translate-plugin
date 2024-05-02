@@ -52,7 +52,7 @@ function throttle(fn: Function, interval: number): (...args: any[]) => Promise<a
 function formatText(text: string): string {
     // 去除特殊字符，去除首尾空格，转为小写，去除驼峰，转空格
     return text
-        .replaceAll(/[<>{}()_$\#@%]/g, ' ')
+        .replaceAll(/[<>{}()_$\#@%"'‘’“”-]/g, ' ')
         .replaceAll(/([A-Z])/g, ' \$1')
         .toLowerCase()
         // 去除首尾空格
